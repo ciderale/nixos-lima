@@ -2,7 +2,7 @@
   description = "NixOS on Lima Module";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-24.11-small";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05-small";
     disko.url = "github:nix-community/disko";
     disko.inputs.nixpkgs.follows = "nixpkgs";
   };
