@@ -45,6 +45,7 @@
       FLAKE_NAME=''${1:-}
       CMD=''${2:-}
       shift 2 || (
+        limactl --version
         sed -E -n -e 's/^[[:space:]]+([^[:space:]]+)\)/usage: nixos-lima <VM_NAME> \1/p' "$0"
         echo "   VM_NAME is a flake attribute for a nixosConfiguration.VM_NAME"
         echo "           defaults to flake in current working dir if no no flake path given"
