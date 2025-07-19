@@ -4,6 +4,7 @@
   ...
 }: {
   #lima.settings.plain = true; #disables mounts,ports,ga,etc
+  # lima.tick = "1000ms"; # more polling increases system load
   lima.settings.ssh.localPort = 2222;
   lima.settings.mounts = [
     {location = "/Users/${config.lima.user.name}";}
