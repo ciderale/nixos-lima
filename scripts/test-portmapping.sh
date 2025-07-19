@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
-NGINX_PORT=8888
-NGINX_IMAGE=nginx
+PORT=8888
+IMAGE=alpine/socat
+MESSAGE="SUCCESSFUL RESPONSE"
 
 function now() {
   echo $(($(date +%s%N)/1000000))
@@ -20,20 +21,21 @@ function log() {
 }
 
 
-log "Starting nginx"
-docker run -p $NGINX_PORT:80 $NGINX_IMAGE 2> /dev/null &
+log "Starting socat http server"
+docker run -p $PORT:$PORT $IMAGE \
+  TCP-LISTEN:$PORT,crlf,reuseaddr,fork \
+  SYSTEM:"echo HTTP/1.0 200; echo; echo '$MESSAGE'" &
 
-log "Nginx starting in background"
-time (
-  while ! curl --fail --silent localhost:$NGINX_PORT | grep 'Welcome to nginx'; do
-    log "failed request to nginx"
-    sleep 0.1
-  done
-  log "successfull request to nginx"
-)
+log "Server start in background. Start Requests.."
+
+while ! curl --fail --silent localhost:$PORT | grep -- "$MESSAGE"; do
+  log "failed request"
+  sleep 0.02
+done
+
 RESPONSIVITY=$(elapsed)
+log "### SUCCESSFULL REQUEST ###"
 
-log "Nginx request successful. Shutting down"
 kill %1
 wait
 log "DONE"
