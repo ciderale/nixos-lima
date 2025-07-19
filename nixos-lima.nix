@@ -11,6 +11,7 @@
   docker-client,
   coreutils,
   fetchurl,
+  curl,
 }: rec {
   inherit docker-client;
   nixos-anywhere-mod = nixos-anywhere.overrideAttrs (old: {
@@ -24,6 +25,11 @@
     name = "portmapperd.sh";
     runtimeInputs = [docker-client openssh coreutils];
     text = builtins.readFile ./portmapperd.sh;
+  };
+  test-portmapping = writeShellApplication {
+    name = "test-portmapping";
+    runtimeInputs = [docker-client curl coreutils];
+    text = builtins.readFile ./scripts/test-portmapping.sh;
   };
   nixos-lima = writeShellApplication {
     name = "nixos-lima";
