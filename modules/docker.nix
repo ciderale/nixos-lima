@@ -1,5 +1,6 @@
 {
   config,
+  pkgs,
   lib,
   ...
 }: let
@@ -16,4 +17,9 @@ in
     ];
     # ensure that test container finds the docker socket where it is on host
     virtualisation.docker.listenOptions = [cfg.hostDockerSocketLocation];
+    # trigger portmapping update in lima-guestagent
+    lima.sighupTrigger = ''
+      ${pkgs.docker-client}/bin/docker events \
+        --filter event=start --filter event=stop --filter event=kill --filter event=die
+    '';
   }
