@@ -15,7 +15,10 @@
   }: let
     guestSystem = "aarch64-linux";
     hostSystem = "aarch64-darwin";
-    pkgs = nixpkgs.legacyPackages."${hostSystem}";
+    pkgs = import nixpkgs {
+      system = hostSystem;
+      overlays = [(import ./nix/overlay.nix)];
+    };
     packages = pkgs.callPackages ./nixos-lima.nix {};
   in {
     packages.aarch64-darwin = packages;
