@@ -1,5 +1,6 @@
 {
   config,
+  pkgs,
   lib,
   ...
 }:
@@ -25,6 +26,16 @@ with lib; let
         note: smaller values yield higher load by lime-guestagent
       '';
     };
+    sighupTrigger = mkOption {
+      type = types.nullOr types.str;
+      default = null;
+      description = ''
+        command to trigger port mapping update.
+
+        update of port mapping is triggered for every newline of output of
+        this command. the actual information of the output line is ignored.
+      '';
+    };
   };
 in {
   inherit options;
@@ -39,6 +50,25 @@ in {
         # this get everything into the VM -- even qemu, not just the guestagent
         # ExecStart = "${pkgs.lima-bin}/share/lima/lima-guestagent.Linux-aarch64 daemon";
         ExecStart = "${cfg.cidata}/lima-guestagent daemon --vsock-port ${toString cfg.vsockPort} --tick ${cfg.tick}";
+        Restart = "on-failure";
+      };
+    };
+    systemd.services.lima-guestagent-push-events = lib.mkIf (cfg.sighupTrigger != null) {
+      enable = true;
+      description = "trigger portmapping updates";
+      wantedBy = ["multi-user.target"];
+      after = ["network.target"];
+      serviceConfig = {
+        Type = "simple";
+        ExecStart = "${pkgs.writeShellScript "docker-events-push-lima-guestagent.sh" ''
+          set -euo pipefail
+
+          (${cfg.sighupTrigger}) | while read -r ; do
+              AGENT_PID=$(systemctl show --property MainPID --value lima-guestagent)
+              kill -HUP  "$AGENT_PID";
+            done
+        ''}";
+
         Restart = "on-failure";
       };
     };
