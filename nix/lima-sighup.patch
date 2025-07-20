@@ -1,5 +1,5 @@
 diff --git a/cmd/lima-guestagent/daemon_linux.go b/cmd/lima-guestagent/daemon_linux.go
-index 1002a3cb..c378d542 100644
+index 1002a3cb..64417bea 100644
 --- a/cmd/lima-guestagent/daemon_linux.go
 +++ b/cmd/lima-guestagent/daemon_linux.go
 @@ -7,6 +7,8 @@ import (
@@ -11,34 +11,38 @@ index 1002a3cb..c378d542 100644
  	"time"
  
  	"github.com/mdlayher/vsock"
-@@ -54,11 +56,40 @@ func daemonAction(cmd *cobra.Command, _ []string) error {
- 	logrus.Infof("event tick: %v", tick)
- 
- 	newTicker := func() (<-chan time.Time, func()) {
-+		sighupC := make(chan os.Signal, 1)  // channel to wait os.Signal
-+		signal.Notify(sighupC, syscall.SIGHUP)
-+		logrus.Info("register for sighup notifications");
-+
- 		// TODO: use an equivalent of `bpftrace -e 'tracepoint:syscalls:sys_*_bind { printf("tick\n"); }')`,
+@@ -58,7 +60,43 @@ func daemonAction(cmd *cobra.Command, _ []string) error {
  		// without depending on `bpftrace` binary.
  		// The agent binary will need CAP_BPF file cap.
  		ticker := time.NewTicker(tick)
 -		return ticker.C, ticker.Stop
 +
++		logrus.Info("register for sighup notifications");
++		sighupC := make(chan os.Signal, 1)
++		signal.Notify(sighupC, syscall.SIGHUP)
++
 +		c := make(chan time.Time, 1)
 +		go func() {
++			defer close(c)
++			defer close(sighupC)
 +			for {
 +				select {
-+				case <-sighupC:
-+					logrus.Debug("Sighup received");
-+					c <- time.Now()
-+				case now := <-ticker.C:
-+					c <- now
-+				default:
-+					break
++				case _, ok := <-sighupC:
++					if !ok {
++						logrus.Info("Sighup channel closed");
++						sighupC = nil;
++					} else {
++						logrus.Debug("Sighup received");
++						c <- time.Now()
++					}
++				case now, ok := <-ticker.C:
++					if !ok {
++						break;
++					} else {
++						c <- now
++					}
 +				}
 +			}
-+			close(c)
 +			logrus.Info("ticker stopped");
 +		}()
 +
@@ -46,7 +50,6 @@ index 1002a3cb..c378d542 100644
 +			logrus.Info("stopping ticker");
 +			ticker.Stop()
 +			signal.Stop(sighupC)
-+			close(sighupC)
 +		}
 +
 +		return c, stop
