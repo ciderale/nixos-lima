@@ -60,10 +60,10 @@ in {
       after = ["network.target"];
       serviceConfig = {
         Type = "simple";
-        ExecStart = "${pkgs.writeShellScript "docker-events-push-lima-guestagent.sh" ''
+        ExecStart = "${pkgs.writeShellScript "lima-guestagent-push-events.sh" ''
           set -euo pipefail
 
-          (${cfg.sighupTrigger}) | while read -r ; do
+          (${cfg.sighupTrigger}) | while IFS= read -r _; do
               AGENT_PID=$(systemctl show --property MainPID --value lima-guestagent)
               kill -HUP  "$AGENT_PID";
             done
