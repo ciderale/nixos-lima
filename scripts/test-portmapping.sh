@@ -36,22 +36,21 @@ function log() {
 
 
 log "Starting socat http server $PORT"
-docker run -p "$PORT:$PORT" "$IMAGE" \
-  "TCP-LISTEN:$PORT,crlf,reuseaddr,fork" \
-  SYSTEM:"echo HTTP/1.0 200; echo; echo '$MESSAGE'" &
+DOCKER_ID=$(docker run --rm -d -p "$PORT:$PORT" "$IMAGE" \
+  "TCP-LISTEN:$PORT,reuseaddr,fork" \
+  EXEC:cat,nofork)
+trap 'docker kill $DOCKER_ID > /dev/null' EXIT
 
 log "Server start in background. Start Requests.."
 
-while ! curl --fail --silent "localhost:$PORT" | grep -- "$MESSAGE" >&2; do
+# sleep after the echo so that socat does not exit before reading the response
+while ! (echo "$MESSAGE"; sleep 0.02) | socat - "TCP:localhost:$PORT" | grep -- "$MESSAGE" >&2; do
   log "failed request"
-  sleep 0.02
 done
 
 RESPONSIVITY=$(elapsed)
 log "### SUCCESSFULL REQUEST ###"
 
-kill %1
-wait
 log "DONE"
 echo "$RESPONSIVITY"
 

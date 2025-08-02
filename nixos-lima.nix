@@ -11,9 +11,9 @@
   docker-client,
   coreutils,
   fetchurl,
-  curl,
+  socat,
 }: rec {
-  inherit docker-client;
+  inherit docker-client socat;
   nixos-anywhere-mod = nixos-anywhere.overrideAttrs (old: {
     installPhase = ''
       # patch-in support for 'nix --impure'
@@ -28,7 +28,7 @@
   };
   test-portmapping = writeShellApplication {
     name = "test-portmapping";
-    runtimeInputs = [docker-client curl coreutils];
+    runtimeInputs = [docker-client socat coreutils];
     text = builtins.readFile ./scripts/test-portmapping.sh;
   };
   nixos-lima = writeShellApplication {
