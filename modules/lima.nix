@@ -123,8 +123,17 @@ with lib; let
             default = [];
             type = types.listOf (types.submodule {
               options = {
+                guestIP = mkOption {
+                  type = types.nullOr types.str;
+                  default = null;
+                };
+                proto = mkOption {
+                  type = types.nullOr (types.enum ["tcp" "udp" "any"]);
+                  default = null;
+                };
                 guestSocket = mkOption {
-                  type = types.str;
+                  type = types.nullOr types.str;
+                  default = null;
                   description = ''
                     "guestSocket" can include these template variables: {{.Home}}, {{.UID}}, {{.User}}, and {{.Param.Key}}.
 
@@ -132,7 +141,8 @@ with lib; let
                   '';
                 };
                 hostSocket = mkOption {
-                  type = types.str;
+                  type = types.nullOr types.str;
+                  default = null;
                   description = ''
                     "hostSocket" can include {{.Home}}, {{.Dir}}, {{.Name}}, {{.UID}}, {{.User}}, and {{.Param.Key}}.
 
