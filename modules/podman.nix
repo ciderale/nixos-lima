@@ -20,9 +20,4 @@ in
       cfg.hostDockerSocketLocation
       "/var/run/docker.sock"
     ];
-    # trigger portmapping update in lima-guestagent
-    lima.sighupTrigger = ''
-      ${pkgs.podman}/bin/podman events \
-        --filter event=start --filter event=stop --filter event=kill --filter event=die
-    '';
   }
