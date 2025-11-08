@@ -7,7 +7,10 @@
   # lima.tick = "1000ms"; # more polling increases system load
   lima.settings.ssh.localPort = 2222;
   lima.settings.mounts = [
-    {location = "/Users/${config.lima.user.name}";}
+    {
+      location = "/Users/${config.lima.user.name}";
+      writable = true;
+    }
     {
       location = "/tmp/lima";
       writable = true;
