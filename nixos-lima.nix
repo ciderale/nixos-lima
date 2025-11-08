@@ -21,11 +21,6 @@
       ${old.installPhase}
     '';
   });
-  portmapperd = writeShellApplication {
-    name = "portmapperd.sh";
-    runtimeInputs = [docker-client openssh coreutils];
-    text = builtins.readFile ./portmapperd.sh;
-  };
   test-portmapping = writeShellApplication {
     name = "test-portmapping";
     runtimeInputs = [docker-client socat coreutils];
@@ -33,7 +28,7 @@
   };
   nixos-lima = writeShellApplication {
     name = "nixos-lima";
-    runtimeInputs = [lima nixos-anywhere-mod nixos-rebuild diffutils jq nix gnused portmapperd];
+    runtimeInputs = [lima nixos-anywhere-mod nixos-rebuild diffutils jq nix gnused];
     text = ''
       NIXOS_LIMA_CONFIG_ROOT=$HOME/.lima
       mkdir -p "$NIXOS_LIMA_CONFIG_ROOT" # in case lima has never been run
@@ -99,22 +94,6 @@
         ssh)
           load_configuration
           ${openssh}/bin/ssh -p "$SSH_PORT" "$THE_TARGET" "''${NIXOS_LIMA_IDENTITY_OPTS[@]}"
-          ;;
-
-        portmapperd)
-          echo "# NIXOS-LIMA: starting portmapperd for VM $NAME"
-          LIMA_FOLDER="$(limactl list "$NAME" --json | jq -r '.dir')"
-          export CONTAINER_HOST="unix://$LIMA_FOLDER/sock/docker.sock"
-          export DOCKER_HOST="$CONTAINER_HOST"
-
-          # PORTMAPPER_LOG="$LIMA_FOLDER/portmapperd.log"
-          VERBOSE=2 portmapperd.sh -S "$LIMA_FOLDER/ssh.sock" "lima-$NAME"
-          # stopping a backgrounded version is tricky..
-          ;;
-
-        full)
-          $0 "$FLAKE_NAME" start
-          $0 "$FLAKE_NAME" portmapperd
           ;;
 
         write-shrc)
