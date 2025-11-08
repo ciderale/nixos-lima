@@ -36,6 +36,7 @@
       NIXOS_LIMA_SSH_KEY="$NIXOS_LIMA_CONFIG/user"
       NIXOS_LIMA_IDENTITY_OPTS=(-i "$NIXOS_LIMA_SSH_KEY")
       NIXOS_LIMA_SSH_PUB_KEY="$NIXOS_LIMA_CONFIG/user.pub"
+      TARGET_HOST=127.0.0.1 # workaround for https://github.com/NixOS/nix/issues/14148
 
       FLAKE_NAME=''${1:-}
       CMD=''${2:-}
@@ -71,7 +72,7 @@
       function load_configuration() {
           USER_NAME="$(jq -e -r .user.name < "$NIXOS_LIMA_CONFIG_JSON")" || fail "no lima.user.name"
           SSH_PORT="$(jq -e -r .settings.ssh.localPort < "$NIXOS_LIMA_CONFIG_JSON")" || fail "no lima.settings.ssh.localPort"
-          THE_TARGET="$USER_NAME@localhost"
+          THE_TARGET="$USER_NAME@$TARGET_HOST"
       }
       function write_lima_yaml() {
           jq .settings < "$NIXOS_LIMA_CONFIG_JSON"
@@ -145,7 +146,7 @@
 
             echo "# NIXOS-LIMA: regenerate the final lima.yml"
             write_lima_yaml > "$NIXOS_LIMA_VM_CONFIG_YAML"
-            ssh-keygen -R "[localhost]:$SSH_PORT"
+            ssh-keygen -R "[$TARGET_HOST]:$SSH_PORT"
             limactl start "$NAME"
 
             echo "# NIXOS-LIMA: install nixos with nixos-anywhere"
@@ -157,7 +158,7 @@
               --flake "$FLAKE_NAME"
 
             echo "# NIXOS-LIMA: ssh-keyscan to check if vm is up-and-running"
-            while ! ssh-keyscan -4 -p "$SSH_PORT" localhost; do sleep 2; done
+            while ! ssh-keyscan -4 -p "$SSH_PORT" $TARGET_HOST; do sleep 2; done
 
             echo "# NIXOS-LIMA: stop vm to avoid initial startup issues (sockets, etc)"
             $0 "$FLAKE_NAME" stop
