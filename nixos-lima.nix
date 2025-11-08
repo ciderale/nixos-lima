@@ -152,7 +152,7 @@
             nixos-anywhere \
               $NIXOS_LIMA_IMPURE \
               -i "$NIXOS_LIMA_SSH_KEY" \
-              --build-on-remote "$THE_TARGET" -p "$SSH_PORT" \
+              --build-on remote "$THE_TARGET" -p "$SSH_PORT" \
               --post-kexec-ssh-port "$SSH_PORT" \
               --flake "$FLAKE_NAME"
 
