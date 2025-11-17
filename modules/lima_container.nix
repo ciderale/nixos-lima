@@ -6,7 +6,7 @@
   cfg = config.lima;
   dockerSocketLocation = "sock/docker.sock";
 in {
-  imports = [./docker.nix ./podman.nix ./dns.nix];
+  imports = [./docker.nix ./podman.nix];
   options.lima.hostDockerSocketLocation = lib.mkOption {
     type = lib.types.str;
     default = "${cfg.vmConfigDir}/${dockerSocketLocation}";

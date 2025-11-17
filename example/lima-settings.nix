@@ -22,6 +22,10 @@
       proto = "any"; # tcp and udp
     }
   ];
+  lima.settings.hostResolver = {
+    enabled = true;
+    hosts."host.docker.internal" = "host.lima.internal";
+  };
   #lima.settings.video.display = "vz"; add gui
   lima.settings.memory = lib.mkDefault "8GB";
   lima.settings.cpus = lib.mkDefault 8;

@@ -119,6 +119,20 @@ with lib; let
             });
           };
 
+          hostResolver = {
+            enabled = mkEnableOption "hostResolver";
+            ipv6 = mkEnableOption "hostResolver with ipv6";
+            hosts = mkOption {
+              default = {};
+              type = types.attrsOf types.str;
+              description = ''
+                Static names can be defined here as an alternative to adding them to the hosts /etc/hosts.
+                Values can be either other hostnames, or IP addresses.
+                The host.lima.internal name is predefined to specify the gateway address to the host.
+              '';
+            };
+          };
+
           portForwards = mkOption {
             default = [];
             type = types.listOf (types.submodule {
