@@ -26,6 +26,11 @@
     runtimeInputs = [docker-client socat coreutils];
     text = builtins.readFile ./scripts/test-portmapping.sh;
   };
+  test-call-to-host = writeShellApplication {
+    name = "test-call-to-host";
+    runtimeInputs = [docker-client socat coreutils];
+    text = builtins.readFile ./scripts/test-call-to-host.sh;
+  };
   nixos-lima = writeShellApplication {
     name = "nixos-lima";
     runtimeInputs = [lima nixos-anywhere-mod nixos-rebuild diffutils jq nix gnused];
