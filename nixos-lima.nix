@@ -13,7 +13,7 @@
   fetchurl,
   socat,
 }: rec {
-  inherit docker-client socat;
+  inherit docker-client socat lima;
   nixos-anywhere-mod = nixos-anywhere.overrideAttrs (old: {
     installPhase = ''
       # patch-in support for 'nix --impure'
