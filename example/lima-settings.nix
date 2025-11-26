@@ -36,6 +36,10 @@
   ];
   networking.firewall.enable = false; # firwall may interfere with kind (kubernetes in docker)
   virtualisation.docker.enable = true;
+  virtualisation.docker.daemon.settings = {
+    # --add-host host.docker.internal=host-gateway yields ip of host not vm
+    host-gateway-ips = [config.lima.hostLimaInternal];
+  };
   # virtualisation.podman.enable = true;
   documentation.enable = false; # saves about 0.1GB
 }
