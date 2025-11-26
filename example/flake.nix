@@ -2,7 +2,7 @@
   description = "NixOS on Lima";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable-small";
+    nixpkgs.url = "github:nixos/nixpkgs";
     nixos-lima.url = "github:ciderale/nixos-lima";
     nixos-lima.inputs.nixpkgs.follows = "nixpkgs";
   };
