@@ -190,8 +190,8 @@
             nixos-rebuild \
               $NIXOS_LIMA_IMPURE \
               --flake "$FLAKE_NAME" \
-              --fast --target-host "$THE_TARGET" --build-host "$THE_TARGET" \
-              --use-remote-sudo \
+              --no-reexec --target-host "$THE_TARGET" --build-host "$THE_TARGET" \
+              --sudo \
               switch "$@"
           fi
           echo "# NIXOS-LIMA: vm is up-to-date and running"
