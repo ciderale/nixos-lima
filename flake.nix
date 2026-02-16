@@ -17,7 +17,7 @@
     hostSystem = "aarch64-darwin";
     pkgs = import nixpkgs {
       system = hostSystem;
-      overlays = [(import ./nix/overlay.nix)];
+      overlays = [];
     };
     packages = pkgs.callPackages ./nixos-lima.nix {};
   in {
