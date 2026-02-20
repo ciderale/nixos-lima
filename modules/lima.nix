@@ -137,8 +137,16 @@ with lib; let
             default = [];
             type = types.listOf (types.submodule {
               options = {
+                ignore = mkOption {
+                  type = types.bool;
+                  default = false;
+                };
                 guestIP = mkOption {
                   type = types.nullOr types.str;
+                  default = null;
+                };
+                guestPort = mkOption {
+                  type = types.nullOr types.number;
                   default = null;
                 };
                 proto = mkOption {
