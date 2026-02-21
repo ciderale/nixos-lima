@@ -141,7 +141,7 @@
           echo "# NIXOS-LIMA: ensure vm exists"
           if ! limactl list "$NAME" | grep "$NAME"; then
             echo "# NIXOS-LIMA: create vm with lima"
-            limactl create --name="$NAME" <(write_lima_yaml)
+            limactl create --yes --name="$NAME" <(write_lima_yaml)
 
             echo "# NIXOS-LIMA: generate actual configuration files"
             $0 "$FLAKE_NAME" write-impure-config # in case pub key was created
