@@ -80,7 +80,7 @@
           THE_TARGET="$USER_NAME@$TARGET_HOST"
       }
       function write_lima_yaml() {
-          jq .settings < "$NIXOS_LIMA_CONFIG_JSON"
+          jq '.settings | del(.. | nulls)' < "$NIXOS_LIMA_CONFIG_JSON"
       }
 
       case "$CMD" in
