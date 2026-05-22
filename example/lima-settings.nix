@@ -21,7 +21,7 @@
     "docker.io"
     "quay.io"
   ];
-  networking.firewall.enable = false; # firwall may interfere with kind (kubernetes in docker)
+  networking.firewall.enable = false; # firewall may interfere with kind (kubernetes in docker)
   virtualisation.docker.enable = true;
   virtualisation.docker.daemon.settings = {
     # --add-host host.docker.internal=host-gateway yields ip of host not vm
