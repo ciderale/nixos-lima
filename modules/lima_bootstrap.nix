@@ -1,5 +1,6 @@
 {
   config,
+  pkgs,
   lib,
   ...
 }: let
@@ -39,11 +40,13 @@ in {
       options = ["ro" "mode=0700" "dmode=0700" "overriderockperm" "exec" "uid=0"];
     };
     systemd.services.lima-init = {
+      path = [pkgs.gnused];
       description = "lima-init for cloud-init like mutable setup";
       wantedBy = ["multi-user.target"];
       script = ''
-        cp "${cfg.cidata}"/meta-data /run/lima-ssh-ready
-        cp "${cfg.cidata}"/meta-data /run/lima-boot-done
+        IID=$(sed -n -e 's/instance-id: //p' ${cfg.cidata}/meta-data)
+        echo $IID > /run/lima-ssh-ready
+        echo $IID > /run/lima-boot-done
       '';
       after = ["network-pre.target"];
 
