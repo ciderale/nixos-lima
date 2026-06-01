@@ -38,6 +38,26 @@ in {
             The same template variables as for listing instances can be used, for example {{.Dir}}.
           '';
         };
+        plain = mkOption {
+          type = types.bool;
+          default = false;
+          description = ''
+            # When the "plain" mode is enabled:
+            # - the YAML properties for mounts, port forwarding, containerd, etc. will be ignored
+            # - guest agent will not be running
+            # - dependency packages like sshfs will not be installed into the VM
+            # User-specified provisioning scripts will be still executed.
+          '';
+        };
+        mountType = mkOption {
+          type = types.enum ["default" "virtiofs" "9p"];
+          default = "virtiofs";
+          description = ''
+            # Mount type for above mounts, such as "reverse-sshfs" (from sshocker), "9p" (QEMU’s virtio-9p-pci, aka virtfs),
+            # or "virtiofs" (experimental on Linux; needs `vmType: vz` on macOS).
+            # 🟢 Builtin default: "default" (resolved to be "9p" for QEMU since Lima v1.0 on non-Windows, "virtiofs" for vz)
+          '';
+        };
         images = mkOption {
           type = types.listOf (types.submodule {
             options = {
