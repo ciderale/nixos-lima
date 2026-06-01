@@ -42,6 +42,7 @@
       NIXOS_LIMA_IDENTITY_OPTS=(-i "$NIXOS_LIMA_SSH_KEY")
       NIXOS_LIMA_SSH_PUB_KEY="$NIXOS_LIMA_CONFIG/user.pub"
       TARGET_HOST=127.0.0.1 # workaround for https://github.com/NixOS/nix/issues/14148
+      : "''${NIXOS_LIMA_REBUILD:=switch}"
 
       FLAKE_NAME=''${1:-}
       CMD=''${2:-}
@@ -192,7 +193,7 @@
               --flake "$FLAKE_NAME" \
               --no-reexec --target-host "$THE_TARGET" --build-host "$THE_TARGET" \
               --sudo \
-              switch "$@"
+              "$NIXOS_LIMA_REBUILD" "$@"
           fi
           echo "# NIXOS-LIMA: vm is up-to-date and running"
           ;;
