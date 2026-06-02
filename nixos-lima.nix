@@ -12,8 +12,13 @@
   coreutils,
   fetchurl,
   socat,
-}: rec {
-  inherit docker-client socat lima;
+}: let
+  limaPatched = lima.overrideAttrs (old: {
+    patches = (old.patches or []) ++ [./nix/MountTagNonNullSeparator.patch];
+  });
+in rec {
+  inherit docker-client socat;
+  lima = limaPatched;
   nixos-anywhere-mod = nixos-anywhere.overrideAttrs (old: {
     installPhase = ''
       # patch-in support for 'nix --impure'
