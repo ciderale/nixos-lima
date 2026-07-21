@@ -3,7 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable-small";
-    nixos-lima.url = "github:ciderale/nixos-lima";
+    nixos-lima.url = "github:ciderale/nixos-lima/general-update";
     nixos-lima.inputs.nixpkgs.follows = "nixpkgs";
   };
 
