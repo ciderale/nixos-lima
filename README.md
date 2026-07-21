@@ -19,17 +19,6 @@ creation, `nixos-lima` also generates a shell script `~/.lima/mynixos.shrc` to s
 the DOCKER_HOST and CONTAINER_HOST variable and add `docker` to your PATH.
 You could add this to your .zprofile startup script for example.
 
-In addition to lima-vm.io's port forwarding, `nixos-lima` can listens to the
-docker event stream and provide port mapping more promptly than via polling.
-
-```
-nix run github:ciderale/nixos-lima portmapperd
-```
-
-The subcommand `nix run github:ciderale/nixos-lima full` combines `start`
-and `portmapperd` in one. Stopping `full` with ctrl-c currently also stops
-the virtual machine (unless it was already running).
-
 ## Adhoc customization using NIXOS_LIMA_IMPURE_CONFIG
 
 You can extend the system configurations by pointing the NIXOS_LIMA_IMPURE_CONFIG
