@@ -6,9 +6,9 @@
   cfg = config.lima;
 
   # compute mountTag hash as done in lima-vm
+  # https://github.com/lima-vm/lima/pull/5081
   # https://github.com/lima-vm/lima/issues/3957
   # https://github.com/lima-vm/lima/blob/master/pkg/limayaml/defaults.go#L97
-  # patch "\0" with ";" to avoid IFD (nix string cannot contain \0)
   mountTag = location: mountPoint: let
     fullhash = builtins.hashString "sha256" "${location}:${mountPoint}";
   in "lima-${builtins.substring 0 16 fullhash}";
