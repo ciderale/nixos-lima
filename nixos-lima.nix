@@ -12,21 +12,9 @@
   coreutils,
   fetchurl,
   socat,
-  fetchFromGitHub,
 }: let
-  limaPatched = lima.overrideAttrs (old: rec {
-    version = "2.2.0";
-    src = fetchFromGitHub {
-      owner = "lima-vm";
-      repo = "lima";
-      tag = "v${version}";
-      hash = "sha256-4Wi+YzMdEN263jeBefEvizlF2k+nLVq3+AHyqagUeHw=";
-    };
-    vendorHash = "sha256-gD9C0kupcEWCsU0nYOg+VcBCWR0oRf6Gaw0DDn0xits=";
-  });
 in rec {
-  inherit docker-client socat;
-  lima = limaPatched;
+  inherit docker-client socat lima;
   nixos-anywhere-mod = nixos-anywhere.overrideAttrs (old: {
     installPhase = ''
       # patch-in support for 'nix --impure'
